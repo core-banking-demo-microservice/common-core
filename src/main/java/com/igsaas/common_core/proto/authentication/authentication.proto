@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package com.vk.webflux.grpc;
+
+option java_package = "com.vk.webflux.grpc";
+option java_multiple_files = true;
+
+message UserList {
+  repeated User user = 1;
+}
+message User{
+  int32 id = 1;
+  string username = 2;
+  string email = 3;
+}
+
+message Empty {}
+
+service AuthenticationService{
+  rpc GetUserList(Empty) returns (UserList);
+}
