@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package com.igsaas.authentication_service.grpc;
+package com.igsaas.authentication_service;
 
-option java_package = "com.vk.webflux.grpc";
 option java_multiple_files = true;
+option java_package = "com.igsaas.authentication_service";
 
 message UserList {
   repeated User user = 1;
