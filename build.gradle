@@ -22,15 +22,15 @@ repositories {
 ext {
 	protobufVersion = '3.25.1'
 	grpcVersion = '1.58.0'
+	reactorGrpcVersion = '1.2.4'
 }
 
 dependencies {
-	implementation("io.grpc:grpc-protobuf:1.71.0")
-	implementation("io.grpc:grpc-stub:1.71.0")
-	implementation 'com.google.protobuf:protobuf-java:3.19.6'
-	implementation 'com.salesforce.servicelibs:reactor-grpc-stub:1.0.0'
+	implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+	implementation "io.grpc:grpc-stub:${grpcVersion}"
+	implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
+	implementation "com.salesforce.servicelibs:reactor-grpc-stub:${reactorGrpcVersion}"
 	implementation 'javax.annotation:javax.annotation-api:1.3.2'
-
 	implementation 'io.swagger:swagger-annotations:1.6.8'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -45,20 +45,35 @@ dependencies {
 
 protobuf {
 	protoc {
-		artifact = "com.google.protobuf:protoc:3.22.3"
+		artifact = "com.google.protobuf:protoc:${protobufVersion}"
 	}
 	plugins {
 		grpc {
-			artifact = "io.grpc:protoc-gen-grpc-java:1.54.0"
+			artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
 		}
 		reactorGrpc {
-			artifact = "com.salesforce.servicelibs:reactor-grpc:1.0.0"
+			artifact = "com.salesforce.servicelibs:reactor-grpc:${reactorGrpcVersion}"
 		}
 	}
 	generateProtoTasks {
-		all()*.plugins {
-			grpc {}
-			reactorGrpc {}
+		all().each { task ->
+			task.plugins {
+				grpc {}
+				reactorGrpc {}
+			}
+			task.builtins {
+				java {}
+			}
+		}
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs 'build/generated/source/proto/main/java'
+			srcDirs 'build/generated/source/proto/main/grpc'
+			srcDirs 'build/generated/source/proto/main/reactor'
 		}
 	}
 }
@@ -67,19 +82,19 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-tasks.register("buildJar", Jar) {
-	archiveBaseName.set("igsaas-common-core")
-	from(sourceSets.main.output)
+task sourceJar(type: Jar) {
+	from sourceSets.main.allJava
+	archiveClassifier.set("sources")
 }
 
 publishing {
 	publications {
 		gpr(MavenPublication) {
-			from(components.java)
+			from components.java
+			artifact sourceJar
 			groupId = project.group
 			artifactId = "common-core"
 			version = project.version
-
 			versionMapping {
 				usage('java-api') {
 					fromResolutionOf('runtimeClasspath')
@@ -90,7 +105,6 @@ publishing {
 			}
 		}
 	}
-
 	repositories {
 		maven {
 			name = "GitHubPackages"
