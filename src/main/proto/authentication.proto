@@ -1,9 +1,10 @@
 syntax = "proto3";
 
-package com.igsaas.authentication_service;
+package com.igsaas.common;
 
 option java_multiple_files = true;
-option java_package = "com.igsaas.authentication_service";
+option java_package = "com.igsaas.common.grpc.auth";
+option java_outer_classname = "AuthProto";
 
 message UserList {
   repeated User user = 1;
