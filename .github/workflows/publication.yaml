@@ -1,11 +1,9 @@
-name: Publish common-core to GitHub Packages
-
+name: Publish package to GitHub Packages
 on:
   push:
-    branches: [ master ]
-    paths:
-      - 'common-core/**'
-
+    branches:
+      - master
+      -
 jobs:
   publish:
     runs-on: ubuntu-latest
