@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package com.vk.webflux.grpc;
+package com.igsaas.authentication_service.grpc;
 
 option java_package = "com.vk.webflux.grpc";
 option java_multiple_files = true;
