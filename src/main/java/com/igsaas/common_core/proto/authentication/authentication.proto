@@ -16,6 +16,6 @@ message User{
 
 message Empty {}
 
-service AuthenticationService{
+service AuthenticationGrpcService {
   rpc GetUserList(Empty) returns (UserList);
 }
