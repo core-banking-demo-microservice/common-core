@@ -18,7 +18,7 @@ enum UserStatus {
   USER_STATUS_UNSPECIFIED = 0;
   ACTIVE = 1;
   INACTIVE = 2;
-  PENDING = 3;
+  SUSPENDED = 3;
 }
 
 message UserRequestBody {
