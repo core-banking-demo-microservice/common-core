@@ -1,4 +1,4 @@
-package com.igsaas.common_core.common.dto;
+package com.igsaas.common_core.common.dto.pagination;
 
 import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;

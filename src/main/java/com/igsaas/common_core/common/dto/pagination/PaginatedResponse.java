@@ -1,4 +1,4 @@
-package com.igsaas.common_core.common.dto;
+package com.igsaas.common_core.common.dto.pagination;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
