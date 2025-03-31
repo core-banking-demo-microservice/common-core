@@ -24,7 +24,7 @@ enum UserStatus {
 message UserRequestBody {
   oneof identifier {
     string username = 1;
-    string id = 2;
+    int32 id = 2;
   }
 }
 
