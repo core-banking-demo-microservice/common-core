@@ -22,9 +22,13 @@ enum UserStatus {
 }
 
 message UserRequestBody {
-  string username = 1;
+  oneof identifier {
+    string username = 1;
+    string id = 2;
+  }
 }
 
 service AuthenticationGrpcService {
-  rpc GetUserByUsername(UserRequestBody) returns (User);
+  rpc getUserByUsername(UserRequestBody) returns (User);
+  rpc getUserById(UserRequestBody) returns (User);
 }
