@@ -29,5 +29,5 @@ jobs:
           ./gradlew clean build publish --refresh-dependencies
           ./gradlew publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}

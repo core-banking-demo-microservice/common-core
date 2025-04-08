@@ -1,16 +1,20 @@
 package com.igsaas.common_core.common.exception.filter;
 
+import com.google.gson.Gson;
 import com.igsaas.common_core.common.dto.ApiParameterError;
 import com.igsaas.common_core.common.dto.ErrorResponse;
+import com.igsaas.common_core.common.dto.HttpException;
 import com.igsaas.common_core.common.exception.DataIntegrityValidationException;
 import com.igsaas.common_core.common.exception.aabstract.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +25,14 @@ import java.util.regex.Pattern;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionFilter {
+    @ExceptionHandler(WebClientResponseException.class)
+    public ResponseEntity<Object> handleWebClientResponseException(final WebClientResponseException ex) {
+        final var error = new HashMap<String, Object>();
+        final var errorResponse = new Gson().fromJson(ex.getResponseBodyAsString(), HttpException.class);
+        error.put("errorCode", errorResponse.errorCode());
+        error.put("errorMessage", errorResponse.errorMessage());
+        return new ResponseEntity<>(error, HttpStatusCode.valueOf(ex.getStatusCode().value()));
+    }
 
     @ExceptionHandler(AbstractUnauthorizedException.class)
     public final ResponseEntity<Object> handelUnAuthorizeOtpException(final AbstractUnauthorizedException exception) {
