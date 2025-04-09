@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.HashMap;
 
-public class GlobalExceptionGrpcFilter {
+public class GlobalExceptionGrpcFilter extends GlobalExceptionFilter {
     @ExceptionHandler(StatusRuntimeException.class)
     public ResponseEntity<Object> handleGrpcStatusRuntimeException(final StatusRuntimeException ex) {
         final var error = new HashMap<String, Object>();
