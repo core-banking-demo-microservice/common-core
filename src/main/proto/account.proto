@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package com.igsaas.common;
+
+option java_multiple_files = true;
+option java_package = "com.igsaas.common.grpc.account";
+option java_outer_classname = "AccountProto";
+import "google/protobuf/empty.proto";
+
+service AuthenticationGrpcService {
+  rpc validateAccountByAccountNumber(ValidateAccountPayload) returns (google.protobuf.Empty);
+}
+
+message ValidateAccountPayload {
+  string accountNumber = 1;
+}

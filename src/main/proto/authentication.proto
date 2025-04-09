@@ -6,6 +6,12 @@ option java_multiple_files = true;
 option java_package = "com.igsaas.common.grpc.auth";
 option java_outer_classname = "AuthProto";
 
+
+service AuthenticationGrpcService {
+  rpc getUserByUsername(UserRequestBody) returns (UserResponse);
+  rpc getUserById(UserRequestBody) returns (UserResponse);
+}
+
 message UserResponse {
   int32 id = 1;
   string username = 2;
@@ -26,9 +32,4 @@ message UserRequestBody {
     string username = 1;
     int32 id = 2;
   }
-}
-
-service AuthenticationGrpcService {
-  rpc getUserByUsername(UserRequestBody) returns (UserResponse);
-  rpc getUserById(UserRequestBody) returns (UserResponse);
 }
