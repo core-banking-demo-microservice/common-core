@@ -7,7 +7,7 @@ option java_package = "com.igsaas.common.grpc.account";
 option java_outer_classname = "AccountProto";
 import "google/protobuf/empty.proto";
 
-service AuthenticationGrpcService {
+service AccountGrpcService {
   rpc validateAccountByAccountNumber(ValidateAccountPayload) returns (google.protobuf.Empty);
 }
 
