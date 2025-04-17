@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 public interface SoftDeleteRepository<T, ID> {
     @NonNull
-    Mono<Long> count(Class<T> entityClass);
+    Mono<Long> countActive(Class<T> entityClass);
 
     @NonNull
     Mono<Boolean> existsById(@NonNull ID id, Class<T> entityClass);

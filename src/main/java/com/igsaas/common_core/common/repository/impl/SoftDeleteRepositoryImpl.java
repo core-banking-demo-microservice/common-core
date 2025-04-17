@@ -33,7 +33,7 @@ public class SoftDeleteRepositoryImpl<T extends AuditEntity, ID> implements Soft
 
     @NonNull
     @Override
-    public Mono<Long> count(Class<T> entityClass) {
+    public Mono<Long> countActive(Class<T> entityClass) {
         return this.entityOperations.count(Query.query(where(getDeletedFieldProperty().getName()).isNull()), entityClass);
     }
 
