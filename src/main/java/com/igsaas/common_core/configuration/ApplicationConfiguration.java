@@ -7,10 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.igsaas.common_core.common.repository.impl.SoftDeleteRepositoryImpl;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.r2dbc.convert.R2dbcConverter;
-import org.springframework.data.r2dbc.core.R2dbcEntityOperations;
 
 public class ApplicationConfiguration {
 
@@ -18,13 +15,6 @@ public class ApplicationConfiguration {
             .setDateFormat(new StdDateFormat())
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .registerModules(new JavaTimeModule());
-
-    @Bean
-    public SoftDeleteRepositoryImpl<?, ?> softDeleteRepositoryImpl(
-            R2dbcEntityOperations entityOperations,
-            R2dbcConverter converter) {
-        return new SoftDeleteRepositoryImpl<>(entityOperations, converter);
-    }
 
     @Bean
     public ObjectMapper objectMapper() {
