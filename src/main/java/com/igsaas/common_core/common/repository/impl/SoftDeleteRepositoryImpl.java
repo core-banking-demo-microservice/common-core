@@ -12,7 +12,6 @@ import org.springframework.data.relational.core.query.Query;
 import org.springframework.data.relational.core.query.Update;
 import org.springframework.data.util.Streamable;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
@@ -23,7 +22,6 @@ import java.util.List;
 
 import static org.springframework.data.relational.core.query.Criteria.where;
 
-@Component
 public class SoftDeleteRepositoryImpl<T extends AuditEntity, ID> implements SoftDeleteRepository<T, ID> {
     private final R2dbcEntityOperations entityOperations;
     private final R2dbcConverter converter;
