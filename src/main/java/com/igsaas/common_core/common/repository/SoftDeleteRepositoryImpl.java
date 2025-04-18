@@ -1,7 +1,5 @@
-package com.igsaas.common_core.common.repository.impl;
+package com.igsaas.common_core.common.repository;
 
-import com.igsaas.common_core.common.repository.AuditEntity;
-import com.igsaas.common_core.common.repository.SoftDeleteRepository;
 import org.reactivestreams.Publisher;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.r2dbc.convert.R2dbcConverter;
@@ -12,7 +10,6 @@ import org.springframework.data.relational.core.query.Query;
 import org.springframework.data.relational.core.query.Update;
 import org.springframework.data.util.Streamable;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
@@ -23,7 +20,6 @@ import java.util.List;
 
 import static org.springframework.data.relational.core.query.Criteria.where;
 
-@Repository
 public class SoftDeleteRepositoryImpl<T extends AuditEntity, ID> implements SoftDeleteRepository<T, ID> {
     private final R2dbcEntityOperations entityOperations;
     private final R2dbcConverter converter;
