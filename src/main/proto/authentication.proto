@@ -10,6 +10,7 @@ option java_outer_classname = "AuthProto";
 service AuthenticationGrpcService {
   rpc getUserByUsername(UserRequestBody) returns (UserResponse);
   rpc getUserById(UserRequestBody) returns (UserResponse);
+  rpc getAllUsers(EmptyRequest) returns (UserListResponse);
 }
 
 message UserResponse {
@@ -32,4 +33,10 @@ message UserRequestBody {
     string username = 1;
     int32 id = 2;
   }
+}
+
+message EmptyRequest {}
+
+message UserListResponse {
+  repeated UserResponse users = 1;
 }
