@@ -2,12 +2,14 @@ package com.igsaas.common_core.common.repository;
 
 import org.reactivestreams.Publisher;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
+@NoRepositoryBean
 public interface SoftDeleteRepository<T, ID> {
     @NonNull
     Mono<Long> count(Class<T> entityClass);
