@@ -4,12 +4,15 @@ import com.igsaas.common_core.common.repository.AuditEntity;
 import com.igsaas.common_core.common.repository.SoftDeleteRepository;
 import org.reactivestreams.Publisher;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.r2dbc.convert.R2dbcConverter;
+import org.springframework.data.r2dbc.convert.MappingR2dbcConverter;
 import org.springframework.data.r2dbc.core.R2dbcEntityOperations;
+import org.springframework.data.r2dbc.repository.support.SimpleR2dbcRepository;
+import org.springframework.data.relational.core.mapping.RelationalPersistentEntity;
 import org.springframework.data.relational.core.mapping.RelationalPersistentProperty;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
 import org.springframework.data.relational.core.query.Update;
+import org.springframework.data.relational.repository.support.MappingRelationalEntityInformation;
 import org.springframework.data.util.Streamable;
 import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,31 +25,38 @@ import java.util.List;
 
 import static org.springframework.data.relational.core.query.Criteria.where;
 
-public class SoftDeleteRepositoryImpl<T extends AuditEntity, ID> implements SoftDeleteRepository<T, ID> {
-    private final R2dbcEntityOperations entityOperations;
-    private final R2dbcConverter converter;
+public class SoftDeleteRepositoryImpl<T extends AuditEntity, ID>
+        extends SimpleR2dbcRepository<T, ID>
+        implements SoftDeleteRepository<T, ID> {
 
-    public SoftDeleteRepositoryImpl(R2dbcEntityOperations entityOperations, R2dbcConverter converter) {
-        this.entityOperations = entityOperations;
+    private final MappingR2dbcConverter converter;
+    private final R2dbcEntityOperations entityOperations;
+
+    public SoftDeleteRepositoryImpl(
+            RelationalPersistentEntity<T> entity,
+            R2dbcEntityOperations operations,
+            MappingR2dbcConverter converter) {
+
+        super(new MappingRelationalEntityInformation<>(entity), operations, converter);
         this.converter = converter;
+        this.entityOperations = operations;
     }
 
     @NonNull
     @Override
     public Mono<Long> count(Class<T> entityClass) {
-        return this.entityOperations.count(Query.query(where(getDeletedFieldProperty().getName()).isNull()), entityClass);
+        return entityOperations.count(Query.query(where(getDeletedFieldProperty().getName()).isNull()), entityClass);
     }
 
     @NonNull
     @Override
     public Mono<Boolean> existsById(@NonNull ID id, Class<T> entityClass) {
-
         Assert.notNull(id, "Id must not be null");
 
         var criteria = Criteria.where(getIdProperty(entityClass).getName()).is(id)
                 .and(getDeletedFieldProperty().getName()).isNull();
 
-        return this.entityOperations.exists(Query.query(criteria), entityClass);
+        return entityOperations.exists(Query.query(criteria), entityClass);
     }
 
     @NonNull
@@ -55,13 +65,13 @@ public class SoftDeleteRepositoryImpl<T extends AuditEntity, ID> implements Soft
         var criteria = Criteria.where(getIdProperty(entityClass).getName()).is(id)
                 .and(getDeletedFieldProperty().getName()).isNull();
 
-        return this.entityOperations.selectOne(Query.query(criteria), entityClass);
+        return entityOperations.selectOne(Query.query(criteria), entityClass);
     }
 
     @NonNull
     @Override
     public Flux<T> findAll(Class<T> entityClass) {
-        return this.entityOperations.select(Query.query(where(getDeletedFieldProperty().getName()).isNull()), entityClass);
+        return entityOperations.select(Query.query(where(getDeletedFieldProperty().getName()).isNull()), entityClass);
     }
 
     @NonNull
@@ -78,17 +88,15 @@ public class SoftDeleteRepositoryImpl<T extends AuditEntity, ID> implements Soft
         Assert.notNull(idPublisher, "The Id Publisher must not be null");
 
         return Flux.from(idPublisher).buffer().filter(ids -> !ids.isEmpty()).concatMap(ids -> {
-
             if (ids.isEmpty()) {
                 return Flux.empty();
             }
 
             String idProperty = getIdProperty(entityClass).getName();
-
             var criteria = Criteria.where(idProperty).in(ids)
                     .and(getDeletedFieldProperty().getName()).isNull();
 
-            return this.entityOperations.select(Query.query(criteria), entityClass);
+            return entityOperations.select(Query.query(criteria), entityClass);
         });
     }
 
@@ -98,15 +106,14 @@ public class SoftDeleteRepositoryImpl<T extends AuditEntity, ID> implements Soft
         Assert.notNull(sort, "Sort must not be null");
 
         var query = Query.query(where(getDeletedFieldProperty().getName()).isNull());
-
-        return this.entityOperations.select(query.sort(sort), entityClass);
+        return entityOperations.select(query.sort(sort), entityClass);
     }
 
     @NonNull
     @Override
     @Transactional
     public Mono<Void> softDeleteAll(Class<T> entityClass) {
-        return this.entityOperations.update(Query.empty(),
+        return entityOperations.update(Query.empty(),
                 Update.update(getDeletedFieldProperty().getName(), Instant.now()),
                 entityClass
         ).then();
@@ -119,11 +126,10 @@ public class SoftDeleteRepositoryImpl<T extends AuditEntity, ID> implements Soft
         Assert.notNull(ids, "The iterable of Id's must not be null");
 
         List<? extends ID> idsList = Streamable.of(ids).toList();
-
         var query = Query.query(where(getIdProperty(entityClass).getName()).in(idsList));
         var update = Update.update(getDeletedFieldProperty().getName(), Instant.now());
 
-        return this.entityOperations.update(query, update, entityClass).then();
+        return entityOperations.update(query, update, entityClass).then();
     }
 
     @NonNull
@@ -135,7 +141,7 @@ public class SoftDeleteRepositoryImpl<T extends AuditEntity, ID> implements Soft
         var query = Query.query(where(getIdProperty(entityClass).getName()).is(id));
         var update = Update.update(getDeletedFieldProperty().getName(), Instant.now());
 
-        return this.entityOperations.update(query, update, entityClass).then();
+        return entityOperations.update(query, update, entityClass).then();
     }
 
     private RelationalPersistentProperty getDeletedFieldProperty() {
@@ -148,7 +154,7 @@ public class SoftDeleteRepositoryImpl<T extends AuditEntity, ID> implements Soft
     private RelationalPersistentProperty getIdProperty(Class<T> entityClass) {
         return this.converter
                 .getMappingContext()
-                .getRequiredPersistentEntity(entityClass) //
+                .getRequiredPersistentEntity(entityClass)
                 .getRequiredIdProperty();
     }
 }
