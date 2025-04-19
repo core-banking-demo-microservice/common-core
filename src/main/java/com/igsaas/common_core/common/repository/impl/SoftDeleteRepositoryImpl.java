@@ -1,5 +1,7 @@
-package com.igsaas.common_core.common.repository;
+package com.igsaas.common_core.common.repository.impl;
 
+import com.igsaas.common_core.common.repository.AuditEntity;
+import com.igsaas.common_core.common.repository.SoftDeleteRepository;
 import org.reactivestreams.Publisher;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.r2dbc.convert.R2dbcConverter;
