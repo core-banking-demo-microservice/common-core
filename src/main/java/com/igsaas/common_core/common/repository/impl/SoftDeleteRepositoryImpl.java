@@ -4,7 +4,7 @@ import com.igsaas.common_core.common.repository.AuditEntity;
 import com.igsaas.common_core.common.repository.SoftDeleteRepository;
 import org.reactivestreams.Publisher;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.r2dbc.convert.MappingR2dbcConverter;
+import org.springframework.data.r2dbc.convert.R2dbcConverter;
 import org.springframework.data.r2dbc.core.R2dbcEntityOperations;
 import org.springframework.data.r2dbc.repository.support.SimpleR2dbcRepository;
 import org.springframework.data.relational.core.mapping.RelationalPersistentEntity;
@@ -29,17 +29,13 @@ public class SoftDeleteRepositoryImpl<T extends AuditEntity, ID>
         extends SimpleR2dbcRepository<T, ID>
         implements SoftDeleteRepository<T, ID> {
 
-    private final MappingR2dbcConverter converter;
     private final R2dbcEntityOperations entityOperations;
+    private final R2dbcConverter converter;
 
-    public SoftDeleteRepositoryImpl(
-            RelationalPersistentEntity<T> entity,
-            R2dbcEntityOperations operations,
-            MappingR2dbcConverter converter) {
-
-        super(new MappingRelationalEntityInformation<>(entity), operations, converter);
+    public SoftDeleteRepositoryImpl(RelationalPersistentEntity<T> entity, R2dbcEntityOperations entityOperations, R2dbcConverter converter) {
+        super(new MappingRelationalEntityInformation<>(entity), entityOperations, converter);
+        this.entityOperations = entityOperations;
         this.converter = converter;
-        this.entityOperations = operations;
     }
 
     @NonNull
